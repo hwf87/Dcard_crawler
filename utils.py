@@ -29,16 +29,33 @@ class mysqlDatabase:
     def get_engine(self):
         sql_engine = create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.format(self.database_username, self.database_password, self.database_ip, self.database_name))
         return sql_engine
-    def select_table(self, df, table_name):
+    def select_table(self, sql):
         connection = self.get_engine()
         df = pd.read_sql(sql, con = connection)
-        print('Successfully select from Bigdata table: ' + table_name)
+        print('Successfully select from Bigdata table')
         return df
     def insert_table(self, df, table_name):
         connection = self.get_engine()
         df.astype(str).to_sql(name=table_name, con=connection, if_exists = 'append', index=False)
         print('Successfully insert into Bigdata table: ' + table_name)
         return df
+    def upsert_table(self, df, table_name):
+        connection = self.get_engine()
+        df.astype(str).to_sql(name=table_name, con=connection, if_exists = 'replace', index=False)
+        trans = connection.begin()
+        try:
+            # delete those rows that we are going to "upsert"
+            sql = '''
+            delete from :table_name where id in (select id from my_tmp)
+            '''
+            sql = sql.replace(':table_name', table_name)
+            connection.execute('')
+            trans.commit()
+            # insert changed rows
+            df.to_sql(name=table_name, con=connection, if_exists = 'append', index=False)
+        except:
+            # trans.rollback()
+            print('oops, upsert failed!')
 
 
 class dcardApi:
@@ -97,7 +114,7 @@ class dcardApi:
         '''
         文章留言
         '''
-        url = self.base_url + '/posts/' + str(postid) + '/links'
+        url = self.base_url + '/posts/' + str(postid) + '/comments'
         df = self.get_df_from_api(url)
         return df
 
