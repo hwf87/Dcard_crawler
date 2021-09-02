@@ -13,9 +13,7 @@
 # ---
 
 import json
-import pymysql
 import requests
-import sqlalchemy
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -30,31 +28,33 @@ class mysqlDatabase:
         sql_engine = create_engine('mysql+mysqlconnector://{0}:{1}@{2}/{3}'.format(self.database_username, self.database_password, self.database_ip, self.database_name))
         return sql_engine
     def select_table(self, sql):
-        connection = self.get_engine()
-        df = pd.read_sql(sql, con = connection)
+        engine = self.get_engine()
+        df = pd.read_sql(sql, con = engine)
         print('Successfully select from Bigdata table')
         return df
     def insert_table(self, df, table_name):
-        connection = self.get_engine()
-        df.astype(str).to_sql(name=table_name, con=connection, if_exists = 'append', index=False)
+        engine = self.get_engine()
+        df.astype(str).to_sql(name=table_name, con=engine, if_exists = 'append', index=False)
         print('Successfully insert into Bigdata table: ' + table_name)
         return df
     def upsert_table(self, df, table_name):
-        connection = self.get_engine()
-        df.astype(str).to_sql(name=table_name, con=connection, if_exists = 'replace', index=False)
-        trans = connection.begin()
+        engine = self.get_engine()
+        connection = engine.connect()
+        # create tmp table 暫存要插入的所有資料
+        df.astype(str).to_sql(name='upsert_tmp', con=engine, if_exists = 'replace', index=False)
         try:
-            # delete those rows that we are going to "upsert"
+            # 刪除會被更新的資料
+            sql_safe = '''SET SQL_SAFE_UPDATES=0'''
             sql = '''
-            delete from :table_name where id in (select id from my_tmp)
+            delete from Bigdata.:table_name where exists (select id from Bigdata.upsert_tmp where upsert_tmp.id = :table_name.id)
             '''
             sql = sql.replace(':table_name', table_name)
-            connection.execute('')
-            trans.commit()
-            # insert changed rows
-            df.to_sql(name=table_name, con=connection, if_exists = 'append', index=False)
+            connection.execute(sql_safe)
+            connection.execute(sql)
+            # 插入所有資料完成更新
+            df.astype(str).to_sql(name=table_name, con=engine, if_exists = 'append', index=False)
+            print('Successfully upsert into Bigdata table: ' + table_name)
         except:
-            # trans.rollback()
             print('oops, upsert failed!')
 
 
