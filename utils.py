@@ -86,11 +86,14 @@ class dcardApi:
         df = self.get_df_from_api(url)
         return df
 
-    def get_Dcard_posts(self, forums_name):
+    def get_Dcard_posts(self, forums_name, before_postid=None):
         '''
         看板文章列表
         '''
-        url = self.base_url + '/forums/' + str(forums_name) + '/posts' + '?popular=' + self.popular + '&limit=' + str(self.max_limit)
+        if before_postid == None:
+            url = self.base_url + '/forums/' + str(forums_name) + '/posts' + '?popular=' + self.popular + '&limit=' + str(self.max_limit)
+        else:
+            url = self.base_url + '/forums/' + str(forums_name) + '/posts' + '?popular=' + self.popular + '&limit=' + str(self.max_limit) + '&before=' + str(before_postid)
         df = self.get_df_from_api(url)
         return df
 
