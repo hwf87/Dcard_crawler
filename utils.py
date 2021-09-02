@@ -19,7 +19,6 @@ import sqlalchemy
 import pandas as pd
 from sqlalchemy import create_engine
 
-print('this is a test~~~lalala')
 
 class mysqlDatabase:
     def __init__(self, database_username, database_password, database_ip, database_name):
@@ -114,11 +113,14 @@ class dcardApi:
         df = self.get_df_from_api(url)
         return df
 
-    def get_Dcard_posts_comments(self, postid):
+    def get_Dcard_posts_comments(self, postid, after_floorid=None):
         '''
         文章留言
         '''
-        url = self.base_url + '/posts/' + str(postid) + '/comments'
+        if after_floorid == None:
+            url = self.base_url + '/posts/' + str(postid) + '/comments'
+        else:
+            url = self.base_url + '/posts/' + str(postid) + '/comments' + '?after=' + str(after_floorid)
         df = self.get_df_from_api(url)
         return df
 
