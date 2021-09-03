@@ -12,6 +12,7 @@
 #     name: python3
 # ---
 
+import yaml
 import time
 import pandas as pd
 from utils import mysqlDatabase, dcardApi
@@ -94,15 +95,15 @@ class postCrawler:
 
 
 if __name__ == '__main__':
-    database_username = 'jackyfu'
-    database_password = 'data8756'
-    database_ip       = 'sg2nlmysql29plsk.secureserver.net'
-    database_name     = 'Bigdata'
+    with open('config.yml', 'r') as stream:
+        myconfig = yaml.load(stream, Loader=yaml.CLoader)
+    database_username = myconfig['mysql_database']['database_username']
+    database_password = myconfig['mysql_database']['database_password']
+    database_ip       = myconfig['mysql_database']['database_ip']
+    database_name     = myconfig['mysql_database']['database_name']
     base_url = 'https://www.dcard.tw/service/api/v2'
     popular = 'false'
     max_limit = '100'
     ###
     PostCrawler = postCrawler(database_username, database_password, database_ip, database_name, base_url, popular, max_limit)
     df_post = PostCrawler.main()
-
-

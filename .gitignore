@@ -1,2 +1,4 @@
 /_cron_log/*.log
 /__pycache__/
+*.ipynb_checkpoints
+*.yml
