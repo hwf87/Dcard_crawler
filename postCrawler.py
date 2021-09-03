@@ -44,7 +44,7 @@ class postCrawler:
         left join Bigdata.dcard_forums df on dp.forumid = df.id
         where 1=1
         and df.alias = ':forums_alias'
-        order by createdAT desc
+        order by createdAT asc
         '''
         sql = sql.replace(':forums_alias', forums_alias)
         df = MysqlDatabase.select_table(sql)
