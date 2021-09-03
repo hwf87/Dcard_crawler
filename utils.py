@@ -123,17 +123,3 @@ class dcardApi:
             url = self.base_url + '/posts/' + str(postid) + '/comments' + '?after=' + str(after_floorid)
         df = self.get_df_from_api(url)
         return df
-
-# +
-# database_username = 'jackyfu'
-# database_password = 'data8756'
-# database_ip       = 'sg2nlmysql29plsk.secureserver.net'
-# database_name     = 'Bigdata'
-# base_url = 'https://www.dcard.tw/service/api/v2'
-# popular = 'false'
-# max_limit = '100'
-# ##
-# MysqlDatabase = mysqlDatabase(database_username, database_password, database_ip, database_name)
-# DcardApi = dcardApi(base_url, popular, max_limit)
-# forums_name = 'boba'
-# DcardApi.get_Dcard_posts(forums_name)
