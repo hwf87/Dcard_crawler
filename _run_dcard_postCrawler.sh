@@ -1,3 +1,5 @@
+#!/bin/sh
+source ~/.bash_profile
 echo 'start dcard daily etl job'
 source /Users/jackyfu/miniforge3/bin/activate
 cd /Users/jackyfu/Desktop/hwf87_git/Dcard_crawler/
