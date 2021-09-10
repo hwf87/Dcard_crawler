@@ -61,7 +61,7 @@ class postCrawler:
         DcardApi = dcardApi(self.base_url, self.popular, self.max_limit)
         ## 看板列表
         my_interest_forums = ['時事', '網路購物', '股票', '美妝', '工作', '考試', '穿搭', '3C', 'Apple', '感情', 
-                              '美食', '理財', '居家生活', '臺灣大學', 'YouTuber']
+                              '美食', '理財', '居家生活', '臺灣大學', 'YouTuber', '科技業']
         sql = '''
         select *
         from Bigdata.dcard_forums
@@ -107,3 +107,5 @@ if __name__ == '__main__':
     ###
     PostCrawler = postCrawler(database_username, database_password, database_ip, database_name, base_url, popular, max_limit)
     df_post = PostCrawler.main()
+
+
