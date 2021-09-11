@@ -57,3 +57,4 @@ if __name__ == '__main__':
     ###
     ForumCrawler = forumCrawler(database_username, database_password, database_ip, database_name, base_url, popular, max_limit)
     df_forums = ForumCrawler.main()
+    
